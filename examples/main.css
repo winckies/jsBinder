@@ -1,0 +1,12 @@
+#logger {
+  position: absolute;
+  right: 0;
+}
+
+#log {
+  margin-top: 20px;
+}
+
+.btn {
+  margin-bottom: 10px;
+}

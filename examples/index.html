@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jsBinder</title>
+    <link rel="stylesheet" href="http://getbootstrap.com/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://getbootstrap.com/assets/css/docs.min.css">
+    <link rel="stylesheet" href="main.css">
+  </head>
+  <body>
+
+    <div class="container">
+      
+      <h1>jsBinder</h1>
+      
+      <div class="row">
+        <div class="col-md-8">
+          <section>
+            <h3>Basic call user function</h3>
+            <p>
+              data-func is used to call user javascript function, the value is the user function name.
+              <br/>
+              The first parameter of the user function is the html element.
+            </p>
+            <a class="btn btn-default" data-func="userFunc">Click me</a>
+            
+            <pre class="prettyprint"><xmp><a data-func="userFunc">Click me</a>
+
+// In user.js
+function userFunc(element) {
+  console.log('[USER SCRIPT] call function !');
+}</xmp></pre>
+          </section>
+
+          <section>
+            <h3>Ajax call</h3>
+            <p>
+              The value of data-link will be the url send by ajax request.
+            </p>
+            <a class="btn btn-default" data-link="/">Click me</a>
+            
+            <pre class="prettyprint"><xmp><a data-link="/">Click me</a></xmp></pre>
+          </section>
+
+          <section>
+            <h3>Specified event</h3>
+            <p>
+              data-event is used to define wich event is associated with the element.
+            </p>
+            <a class="btn btn-default" data-link="/" data-event="mouseover">Mouseover me</a>
+            <a class="btn btn-default" data-func="userFunc" data-event="mouseover">Mouseover me</a>
+            <pre class="prettyprint"><xmp><a data-link="/" data-event="mouseover">Mouseover me</a>
+<a data-func="userFunc" data-event="mouseover">Mouseover me</a></xmp></pre>
+          </section>
+
+          <section>
+            <h3>Ajax call with content update</h3>
+            <p>
+              With data-wrapper you can easly insert the response content to a container.
+              <br/>
+              The value of data-wrapper is just a selector passed to jQuery.
+            </p>
+            <a class="btn btn-default" data-link="file.html" data-wrapper="#wrapper">Click me</a>
+            <pre class="prettyprint"><xmp><a data-link="file.html" data-wrapper="#wrapper">Click me</a></xmp></pre>
+          </section>
+
+          <section>  
+            <h3>Ajax call with json response</h3>
+            <p>
+              You can specify wich data-type will be parsed by jQuery.
+            </p>
+            <a class="btn btn-default" data-link="file.json" data-type="json" >Click me</a>
+            <pre class="prettyprint"><xmp><a data-link="file.json" data-type="json">Click me</a></xmp></pre>
+          </section>
+
+          <section>
+            <h3>Ajax call with json response and callback function</h3>
+            <p>
+              Callback functions must avec this parameters: callbackFunction(element, data, textStatus, jqXHR, errorThrown);
+              <br/>
+              Element is the div element wich start the event, data is the result of the ajax request, for textStatus and jqXHR please refer to the jquery documentation.
+              <br/>
+              If success, the errorThrown will be setted to null, if not it will data wich be null.
+              <br/>
+              User function must be out outside of "$(document).ready(function()"
+            </p>
+            <a class="btn btn-default" data-link="file.json" data-type="json" data-callback="userCallback">Click me</a>
+            <pre class="prettyprint"><xmp><a data-link="file.json" data-type="json" data-callback="userCallback">Click me</a>
+
+function userCallback(element, data, textStatus, jqXHR, errorThrown) {
+    console.log('[USER SCRIPT] Callback function !');
+}</xmp></pre>
+          </section>
+
+          <section>
+            <h3>Refresh</h3>
+            <p>
+              data-refresh can be usefull to refresh a content (must be used with data-wrapper).
+              <br/>
+              data-refresh value is not mandatory, but if defined you can user "refresh("refreshName")" throw javascript to do the same behavior.
+            </p>
+            <a class="btn btn-default" data-link="file.html" data-wrapper="#wrapper" data-refresh="refreshName">Click me</a>
+            <pre class="prettyprint"><xmp><a data-link="file.html" data-wrapper="#wrapper" data-refresh="refreshName">Click me</a></xmp></pre>
+          </section>
+
+          <section>
+            <h3>Form</h3>
+            <p>
+              Remove or hide the submit element and add a "a" tag with data-form attribute, fill the data-form with the form name if the tag is outside the form.
+              <br/>
+              You can define the "data-link" attribute instead "action" if you like, data-method and method as well.
+            </p>
+            <form action="file.php" method="post" name="formName" class="form-inline">
+              <div class="form-group">
+                <input type="text" class="form-control" name="name"/>
+              </div>
+              <a class="btn btn-default" data-form="formName">save</a>
+            </form>
+            
+            <pre class="prettyprint"><xmp><form action="file.php" method="post" name="formName">
+    <input type="text" name="name"/>
+    <a data-form>save</a>
+</form>
+<a data-form="formName">save</a>
+
+OR
+
+<form name="formName">
+    <input type="text" name="name"/>
+    <a data-form data-link="/" data-method="post">save</a>
+</form></xmp></pre>
+          </section>
+
+          <section>
+            <h3>Options</h3>
+            <p>
+              You can redefine this variables, please look of the jqueryEvents, you have to add all events you wants to handle.
+            </p>
+            <pre class="prettyprint"><xmp>// Set DEBUG to true if you want logs.
+var DEBUG = false;
+
+// jquery Events
+var jqueryEvents = Array('click', 'mouseover');
+
+// Default data type
+// html or json or other acceptable jquery data type
+var defaultDataType = 'json';
+
+// Disable button before ajax call
+var disableFormInputs = true;
+</xmp></pre>
+          </section>
+        </div>
+        <div class="col-md-4" id="logger">
+          <div class="highlight wrapper">
+            <div id="wrapper"></div>
+          </div>
+          <div class="highlight log">
+            <a class="btn btn-default" data-func="clear">clear</a>
+            <div id="log"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js-binder.js"></script>
+    <script src="user.js"></script>
+  </body>
+</html>
