@@ -12,21 +12,21 @@
   <body>
 
     <div class="container">
-      
+
       <h1>jsBinder</h1>
-      
+
       <div class="row">
         <div class="col-md-8">
           <section>
             <h3>Basic call user function</h3>
             <p>
-              data-func is used to call user javascript function, the value is the user function name.
+              jb-func is used to call user javascript function, the value is the user function name.
               <br/>
               The first parameter of the user function is the html element.
             </p>
-            <a class="btn btn-default" data-func="userFunc">Click me</a>
-            
-            <pre class="prettyprint"><xmp><a data-func="userFunc">Click me</a>
+            <a class="btn btn-default" jb-func="userFunc">Click me</a>
+
+            <pre class="prettyprint"><xmp><a jb-func="userFunc">Click me</a>
 
 // In user.js
 function userFunc(element) {
@@ -37,42 +37,42 @@ function userFunc(element) {
           <section>
             <h3>Ajax call</h3>
             <p>
-              The value of data-link will be the url send by ajax request.
+              The value of jb-link will be the url send by ajax request.
             </p>
-            <a class="btn btn-default" data-link="/">Click me</a>
-            
-            <pre class="prettyprint"><xmp><a data-link="/">Click me</a></xmp></pre>
+            <a class="btn btn-default" jb-link="/">Click me</a>
+
+            <pre class="prettyprint"><xmp><a jb-link="/">Click me</a></xmp></pre>
           </section>
 
           <section>
             <h3>Specified event</h3>
             <p>
-              data-event is used to define wich event is associated with the element.
+              jb-event is used to define wich event is associated with the element.
             </p>
-            <a class="btn btn-default" data-link="/" data-event="mouseover">Mouseover me</a>
-            <a class="btn btn-default" data-func="userFunc" data-event="mouseover">Mouseover me</a>
-            <pre class="prettyprint"><xmp><a data-link="/" data-event="mouseover">Mouseover me</a>
-<a data-func="userFunc" data-event="mouseover">Mouseover me</a></xmp></pre>
+            <a class="btn btn-default" jb-link="/" jb-event="mouseover">Mouseover me</a>
+            <a class="btn btn-default" jb-func="userFunc" jb-event="mouseover">Mouseover me</a>
+            <pre class="prettyprint"><xmp><a jb-link="/" jb-event="mouseover">Mouseover me</a>
+<a jb-func="userFunc" jb-event="mouseover">Mouseover me</a></xmp></pre>
           </section>
 
           <section>
             <h3>Ajax call with content update</h3>
             <p>
-              With data-wrapper you can easly insert the response content to a container.
+              With jb-wrapper you can easly insert the response content to a container.
               <br/>
-              The value of data-wrapper is just a selector passed to jQuery.
+              The value of jb-wrapper is just a selector passed to jQuery.
             </p>
-            <a class="btn btn-default" data-link="file.html" data-wrapper="#wrapper">Click me</a>
-            <pre class="prettyprint"><xmp><a data-link="file.html" data-wrapper="#wrapper">Click me</a></xmp></pre>
+            <a class="btn btn-default" jb-link="file.html" jb-wrapper="#wrapper">Click me</a>
+            <pre class="prettyprint"><xmp><a jb-link="file.html" jb-wrapper="#wrapper">Click me</a></xmp></pre>
           </section>
 
-          <section>  
+          <section>
             <h3>Ajax call with json response</h3>
             <p>
-              You can specify wich data-type will be parsed by jQuery.
+              You can specify wich jb-format will be parsed by jQuery.
             </p>
-            <a class="btn btn-default" data-link="file.json" data-type="json" >Click me</a>
-            <pre class="prettyprint"><xmp><a data-link="file.json" data-type="json">Click me</a></xmp></pre>
+            <a class="btn btn-default" jb-link="file.json" jb-format="json" >Click me</a>
+            <pre class="prettyprint"><xmp><a jb-link="file.json" jb-format="json">Click me</a></xmp></pre>
           </section>
 
           <section>
@@ -86,8 +86,8 @@ function userFunc(element) {
               <br/>
               User function must be out outside of "$(document).ready(function()"
             </p>
-            <a class="btn btn-default" data-link="file.json" data-type="json" data-callback="userCallback">Click me</a>
-            <pre class="prettyprint"><xmp><a data-link="file.json" data-type="json" data-callback="userCallback">Click me</a>
+            <a class="btn btn-default" jb-link="file.json" jb-format="json" jb-callback="userCallback">Click me</a>
+            <pre class="prettyprint"><xmp><a jb-link="file.json" jb-format="json" jb-callback="userCallback">Click me</a>
 
 function userCallback(element, data, textStatus, jqXHR, errorThrown) {
     console.log('[USER SCRIPT] Callback function !');
@@ -97,39 +97,39 @@ function userCallback(element, data, textStatus, jqXHR, errorThrown) {
           <section>
             <h3>Refresh</h3>
             <p>
-              data-refresh can be usefull to refresh a content (must be used with data-wrapper).
+              jb-refresh can be usefull to refresh a content (must be used with jb-wrapper).
               <br/>
-              data-refresh value is not mandatory, but if defined you can user "refresh("refreshName")" throw javascript to do the same behavior.
+              jb-refresh value is not mandatory, but if defined you can user "refresh("refreshName")" throw javascript to do the same behavior.
             </p>
-            <a class="btn btn-default" data-link="file.html" data-wrapper="#wrapper" data-refresh="refreshName">Click me</a>
-            <pre class="prettyprint"><xmp><a data-link="file.html" data-wrapper="#wrapper" data-refresh="refreshName">Click me</a></xmp></pre>
+            <a class="btn btn-default" jb-link="file.html" jb-wrapper="#wrapper" jb-refresh="refreshName">Click me</a>
+            <pre class="prettyprint"><xmp><a jb-link="file.html" jb-wrapper="#wrapper" jb-refresh="refreshName">Click me</a></xmp></pre>
           </section>
 
           <section>
             <h3>Form</h3>
             <p>
-              Remove or hide the submit element and add a "a" tag with data-form attribute, fill the data-form with the form name if the tag is outside the form.
+              Remove or hide the submit element and add a "a" tag with jb-form attribute, fill the jb-form with the form name if the tag is outside the form.
               <br/>
-              You can define the "data-link" attribute instead "action" if you like, data-method and method as well.
+              You can define the "jb-link" attribute instead "action" if you like, jb-method and method as well.
             </p>
             <form action="file.php" method="post" name="formName" class="form-inline">
               <div class="form-group">
                 <input type="text" class="form-control" name="name"/>
               </div>
-              <a class="btn btn-default" data-form="formName">save</a>
+              <a class="btn btn-default" jb-form="formName">save</a>
             </form>
-            
+
             <pre class="prettyprint"><xmp><form action="file.php" method="post" name="formName">
     <input type="text" name="name"/>
-    <a data-form>save</a>
+    <a jb-form>save</a>
 </form>
-<a data-form="formName">save</a>
+<a jb-form="formName">save</a>
 
 OR
 
 <form name="formName">
     <input type="text" name="name"/>
-    <a data-form data-link="/" data-method="post">save</a>
+    <a jb-form jb-link="/" jb-method="post">save</a>
 </form></xmp></pre>
           </section>
 
@@ -144,12 +144,15 @@ var DEBUG = false;
 // jquery Events
 var jqueryEvents = Array('click', 'mouseover');
 
-// Default data type
-// html or json or other acceptable jquery data type
-var defaultDataType = 'json';
+// Default callback format
+// html or json or other acceptable jquery dataType
+var defaultCallbackFormat = 'json';
 
 // Disable button before ajax call
 var disableFormInputs = true;
+
+// Customize the 'jb' key
+var jbKey = 'jb';
 </xmp></pre>
           </section>
         </div>
@@ -158,7 +161,7 @@ var disableFormInputs = true;
             <div id="wrapper"></div>
           </div>
           <div class="highlight log">
-            <a class="btn btn-default" data-func="clear">clear</a>
+            <a class="btn btn-default" jb-func="clear">clear</a>
             <div id="log"></div>
           </div>
         </div>
