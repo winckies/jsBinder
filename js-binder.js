@@ -1,4 +1,4 @@
-// jsBinder v1.0
+// jsBinder v1.1
 
 // Set DEBUG to true if you want logs.
 var DEBUG = false;
@@ -16,13 +16,15 @@ var executeBehavior = "safe";
 // jquery Events
 var jqueryEvents = Array('click', 'mouseover');
 
-// Default data type
-// html or json or other acceptable jquery data type
-var defaultDataType = 'json';
+// Default callback format
+// html or json or other acceptable jquery dataType
+var defaultCallbackFormat = 'json';
 
 // Disable button before ajax call
 var disableFormInputs = true;
 
+// Customize the 'jb' key
+var jbKey = 'jb';
 
 // -----------------------------------------------------------------------------
 // Pool request
@@ -32,36 +34,41 @@ var executePool = Array();
 var currentRequest = null;
 
 $(document).ready(function() {
-    
+
     if(DEBUG) {
         console.log('---- jsBinder ----');
         console.log('Config: ExecuteType["' + executeBehavior + '"]');
         console.log('Registred events: ' + jqueryEvents);
     }
-    
+
     // Register basic events
-    jQuery(document).on('click', '*[data-link]:not([data-event]), [data-refresh]:not([data-event])', function() {
+    jQuery(document).on('click', '*[' + jbKey + '-link]:not([' + jbKey + '-event]), [' + jbKey + '-refresh]:not([' + jbKey + '-event])', function() {
         call($(this));
     });
-    
-    jQuery(document).on('click', '*[data-func]:not([data-event]):not([data-link]):not([data-form])', function() {
-        window[$(this).data('func')]($(this));
+
+    jQuery(document).on('click', '*[' + jbKey + '-func]:not([' + jbKey + '-event]):not([' + jbKey + '-link]):not([' + jbKey + '-form])', function() {
+        window[getVal($(this), 'func')]($(this));
     });
-   
+
     // Register specified events
     for(var i = 0; i < jqueryEvents.length; i++) {
-        $('*[data-link][data-event="' + jqueryEvents[i] + '"], *[data-refresh][data-event="' + jqueryEvents[i] + '"]').bind(jqueryEvents[i], function() {
+        $('*[' + jbKey + '-link][' + jbKey + '-event="' + jqueryEvents[i] + '"], *[' + jbKey + '-refresh][' + jbKey + '-event="' + jqueryEvents[i] + '"]').bind(jqueryEvents[i], function() {
             call($(this));
         });
-        $('*[data-func][data-event="' + jqueryEvents[i] + '"]:not([data-link]):not([data-form])').bind(jqueryEvents[i], function() {
-            window[$(this).data('func')]($(this));
+
+        $('*[' + jbKey + '-toggle][' + jbKey + '-event="' + jqueryEvents[i] + '"]').bind(jqueryEvents[i], function() {
+            toggle($(this));
+        });
+
+        $('*[' + jbKey + '-func][' + jbKey + '-event="' + jqueryEvents[i] + '"]:not([' + jbKey + '-link]):not([' + jbKey + '-form])').bind(jqueryEvents[i], function() {
+            window[getVal($(this), 'func')]($(this));
         });
     }
 
     /*
      * Form submit handler
      */
-    jQuery(document).on('click', '*[data-form]', function() {
+    jQuery(document).on('click', '*[' + jbKey + '-form]', function() {
         formCall($(this));
     });
 
@@ -71,10 +78,10 @@ $(document).ready(function() {
 * Prepare execute
 */
 function prepareRequest(element, functionName) {
-  
+
   // check for data-func
-   if(element.data('func'))
-     window[element.data('func')](element);
+   if(getVal(element, 'func'))
+     window[getVal(element, 'func')](element);
 
    var accepted = true;
 
@@ -137,7 +144,14 @@ function endRequest() {
  * Refresh behavior
  */
 function refresh(name) {
-    call($('*[data-refresh="' + name + '"]'));
+    call($('*[' + jbKey + '-refresh="' + name + '"]'));
+}
+
+/*
+ * Toggle
+ */
+function toggle(element) {
+    $(element.attr(jbKey + '-toggle')).toggle();
 }
 
 /*
@@ -149,21 +163,21 @@ function call(element) {
        return;
 
    // Get link
-   var link = element.data('link');
+   var link = getVal(element, 'link');
    // Get method
-   var method = (element.data('method')) ? element.data('method') : 'get';
-   // Get data type
-   var dataType = (element.data('type')) ? element.data('type') : null;
-   if(dataType === null)
-     dataType = (defaultDataType === 'html') ? null : defaultDataType;
+   var method = (getVal(element, 'method')) ? getVal(element, 'method') : 'get';
+   // Get data format
+   var callbackFormat = (getVal(element, 'format')) ? getVal(element, 'format') : null;
+   if(callbackFormat === null)
+     callbackFormat = (defaultCallbackFormat === 'html') ? null : defaultCallbackFormat;
 
-   if (DEBUG) console.log('Call "' + link + '" with method "' + method + '" and dataType: ' + dataType + '.');
+   if (DEBUG) console.log('Call "' + link + '" with method "' + method + '" and callbackFormat: ' + callbackFormat + '.');
 
    // call ajax
    manageRequest($.ajax({
        url: link,
        type: method,
-       datatype: dataType
+       datatype: callbackFormat
    }), element);
 }
 
@@ -176,40 +190,40 @@ function formCall(element) {
        return;
 
    // Get form
-   var form = (element.data('form').length > 0) ? element.parents('form') : $('form[name="' + element.data('form') + '"]');
+   var form = (getVal(element, 'form').length > 0) ? element.parents('form') : $('form[name="' + getVal(element, 'form') + '"]');
    // Get link
-   var link = (form.data('link')) ? form.data('link') : form.attr('action');
+   var link = (getVal(element, 'link')) ? getVal(element, 'link') : form.attr('action');
    // Get method
-   var method = (form.data('method')) ? form.data('method') : form.attr('method');
-   // Get data type
-   var dataType = (element.data('type')) ? element.data('type') : null;
-   if(dataType === null)
-     dataType = (defaultDataType === 'html') ? null : defaultDataType;
+   var method = (getVal(element, 'method')) ? getVal(element, 'method') : form.attr('method');
+   // Get data format
+   var callbackFormat = (getVal(element, 'format')) ? getVal(element, 'format') : null;
+   if(callbackFormat === null)
+     callbackFormat = (defaultCallbackFormat === 'html') ? null : defaultCallbackFormat;
 
    // Prepare form values for request
    var serializedData = form.serialize();
    serializedData += "&" + form.attr('name');
-   
+
    // disable inputs
    if(disableFormInputs) {
      var inputs = form.find("input, select, textarea");
      inputs.attr('disabled', 'disabled');
    }
 
-   if (DEBUG) console.log('Form call "' + link + '" with method "' + method + '" and dataType: ' + dataType + ' and parameter: ' + serializedData);
+   if (DEBUG) console.log('Form call "' + link + '" with method "' + method + '", callbackFormat: ' + callbackFormat + ', parameter(s): ' + serializedData);
 
    // ajax request
    manageRequest($.ajax({
        url: link,
        type: method,
-       datatype: dataType,
+       datatype: callbackFormat,
        data: serializedData
    }), element);
 }
 
 
 /*
-* Manage request result 
+* Manage request result
 */
 function manageRequest(request, element) {
    currentRequest = request;
@@ -241,17 +255,17 @@ function manageRequest(request, element) {
 function doneRequest(element, data, textStatus, jqXHR) {
    if (DEBUG) console.log('[' + jqXHR.status + '] Request done.');
 
-   if (element.data('wrapper')) {
-       if (DEBUG) console.log('Load response content in: ' + element.data('wrapper') + '.');
+   if (getVal(element, 'wrapper')) {
+       if (DEBUG) console.log('Load response content in: ' + getVal(element, 'wrapper') + '.');
        $(wrapper).html(data);
    }
 
-   if (element.data('callback')) {
-       if (DEBUG) console.log('Callback custom function: ' + element.data('callback') + '.');
-       window[element.data('callback')](element, data, textStatus, jqXHR, null);
+   if (getVal(element, 'callback')) {
+       if (DEBUG) console.log('Callback custom function: ' + getVal(element, 'callback') + '.');
+       window[getVal(element, 'callback')](element, data, textStatus, jqXHR, null);
    }
 
-   if(!element.data('callback') && !element.data('wrapper')) {
+   if(!getVal(element, 'callback') && !getVal(element, 'wrapper')) {
        if (DEBUG) console.log('End (without specified behavior).');
    }
 }
@@ -266,9 +280,13 @@ function failedRequest(element, jqXHR, textStatus, errorThrown) {
 
    if (DEBUG) console.log('[' + jqXHR.status + '] Request error: ' + textStatus + ' - ' + errorThrown);
    // Check for call back function
-   if (element.data('callback')) {
-       if (DEBUG) console.log('Callback custom function: "' + element.data('callback') + '".');
+   if (getVal(element, 'callback')) {
+       if (DEBUG) console.log('Callback custom function: "' + getVal(element, 'callback') + '".');
        var data = null;
-       window[element.data('callback')](element, data, textStatus, jqXHR, errorThrown);
+       window[getVal(element, 'callback')](element, data, textStatus, jqXHR, errorThrown);
    }
+}
+
+function getVal(element, name) {
+    return element.attr(jbKey + '-' + name);
 }

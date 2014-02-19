@@ -5,6 +5,7 @@ var console = {
     log: function(m) {
         this.panel.append('<div>' +  m + '</div>');
         $("#log").scrollTop($("#log").height());
+        $('#log').scrollTop($('#log')[0].scrollHeight);
     }
 };
 
@@ -17,7 +18,7 @@ function userFunc(element) {
 }
 
 function clear() {
-  $('#log').html(''); 
+  $('#log').html('');
 }
 
 function updateLogger() {
