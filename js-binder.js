@@ -1,4 +1,4 @@
-// jsBinder v1.1
+// jsBinder 1.2.0
 
 // Set DEBUG to true if you want logs.
 var DEBUG = false;
