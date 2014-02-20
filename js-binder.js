@@ -253,21 +253,23 @@ function manageRequest(request, element) {
 * Call when a define ajax request is done
 */
 function doneRequest(element, data, textStatus, jqXHR) {
-   if (DEBUG) console.log('[' + jqXHR.status + '] Request done.');
+    if (DEBUG) console.log('[' + jqXHR.status + '] Request done.');
 
-   if (getVal(element, 'wrapper')) {
-       if (DEBUG) console.log('Load response content in: ' + getVal(element, 'wrapper') + '.');
-       $(wrapper).html(data);
-   }
+    var wrapper = getVal(element, 'wrapper');
+    if (wrapper) {
+        if (DEBUG) console.log('Load response content in: ' + wrapper + '.');
+        $(wrapper).html(data);
+    }
 
-   if (getVal(element, 'callback')) {
-       if (DEBUG) console.log('Callback custom function: ' + getVal(element, 'callback') + '.');
-       window[getVal(element, 'callback')](element, data, textStatus, jqXHR, null);
-   }
+    var callback = getVal(element, 'callback');
+    if (callback) {
+        if (DEBUG) console.log('Callback custom function: ' + callback + '.');
+        window[callback](element, data, textStatus, jqXHR, null);
+    }
 
-   if(!getVal(element, 'callback') && !getVal(element, 'wrapper')) {
-       if (DEBUG) console.log('End (without specified behavior).');
-   }
+    if(callback && !wrapper) {
+        if (DEBUG) console.log('End (without specified behavior).');
+    }
 }
 
 /*
@@ -280,10 +282,11 @@ function failedRequest(element, jqXHR, textStatus, errorThrown) {
 
    if (DEBUG) console.log('[' + jqXHR.status + '] Request error: ' + textStatus + ' - ' + errorThrown);
    // Check for call back function
-   if (getVal(element, 'callback')) {
-       if (DEBUG) console.log('Callback custom function: "' + getVal(element, 'callback') + '".');
+    var callback = getVal(element, 'callback');
+   if (callback) {
+       if (DEBUG) console.log('Callback custom function: "' + callback + '".');
        var data = null;
-       window[getVal(element, 'callback')](element, data, textStatus, jqXHR, errorThrown);
+       window[callback](element, data, textStatus, jqXHR, errorThrown);
    }
 }
 
