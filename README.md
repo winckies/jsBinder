@@ -9,4 +9,4 @@ See examples to fully understand how it can be usefull.
 Put the "examples" directory accessible for a web server.
 
 # Requirements
-* jquery
+* jquery ~1.7.0
