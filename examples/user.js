@@ -1,4 +1,9 @@
-DEBUG = true;
+$(document).ready(function(){
+    var options = {
+        debug: true
+    };
+    $.jsBinder(options);
+});
 
 var console = {
     panel: $(document.getElementById('log')).append('<div>'),

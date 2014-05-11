@@ -149,23 +149,26 @@ OR
           <section>
             <h3>Options</h3>
             <p>
-              You can redefine this variables, please look of the jqueryEvents, you have to add all events you wants to handle.
+              How to redefine some variables.
             </p>
-            <pre class="prettyprint"><xmp>// Set DEBUG to true if you want logs.
-var DEBUG = false;
+<pre class="prettyprint"><xmp>var options = {
+  // Set debug to true if you want logs.
+  debug = false,
 
-// jquery Events
-var jqueryEvents = Array('click', 'mouseover');
+  // You can add all jquery events you want to handle.
+  jqueryEvents = new Array('click', 'mouseover'),
 
-// Default callback format
-// html or json or other acceptable jquery dataType
-var defaultCallbackFormat = 'json';
+  // Default callback format
+  // html, json or other acceptable jquery dataType
+  defaultCallbackFormat = 'json',
 
-// Disable button before ajax call
-var disableFormInputs = true;
+  // Disable button before ajax call
+  disableFormInputs = true,
 
-// Customize the 'jb' key
-var jbKey = 'jb';
+  // Customize the 'jb' key
+  jbKey = 'jb'
+};
+$.jsBinder(options);
 </xmp></pre>
           </section>
         </div>
@@ -182,7 +185,7 @@ var jbKey = 'jb';
     </div>
 
     <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="../js-binder.js"></script>
+    <script src="../jquery.js-binder.min.js"></script>
     <script src="user.js"></script>
   </body>
 </html>
