@@ -6,7 +6,7 @@ Designed to focus on the usefull code and let listeners/events logic in html att
 See examples to fully understand how it can be usefull.
 
 # Demo and learning
-Put the "examples" directory accessible for a web server.
+You can learn how to use jsBinder by cloning this repository https://github.com/moafred/jsBinder-examples
 
 # Requirements
 * jquery ~1.7.0
