@@ -1,4 +1,4 @@
-// jsBinder 2.0.0
+// jsBinder 2.1.0
 (function ( $ ) {
     // Pool request
     var executePool = new Array();
