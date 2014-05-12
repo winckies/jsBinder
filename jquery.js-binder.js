@@ -37,34 +37,40 @@
         }
 
         // Register basic events
-        jQuery(document).on('click', '*[' + settings.jbKey + '-link]:not([' + settings.jbKey + '-event]), [' + settings.jbKey + '-refresh]:not([' + settings.jbKey + '-event])', function() {
+        jQuery(document).on('click', '*[' + settings.jbKey + '-link]:not([' + settings.jbKey + '-event]), [' + settings.jbKey + '-refresh]:not([' + settings.jbKey + '-event])', function(event) {
             call($(this));
+            event.preventDefault();
         });
 
-        jQuery(document).on('click', '*[' + settings.jbKey + '-func]:not([' + settings.jbKey + '-event]):not([' + settings.jbKey + '-link]):not([' + settings.jbKey + '-form])', function() {
+        jQuery(document).on('click', '*[' + settings.jbKey + '-func]:not([' + settings.jbKey + '-event]):not([' + settings.jbKey + '-link]):not([' + settings.jbKey + '-form])', function(event) {
             window[getVal($(this), 'func')]($(this));
+            event.preventDefault();
         });
 
         // Register specified events
         for(var i = 0; i < settings.jqueryEvents.length; i++) {
-            $('*[' + settings.jbKey + '-link][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"], *[' + settings.jbKey + '-refresh][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"]').bind(settings.jqueryEvents[i], function() {
+            $('*[' + settings.jbKey + '-link][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"], *[' + settings.jbKey + '-refresh][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"]').bind(settings.jqueryEvents[i], function(event) {
                 call($(this));
+                event.preventDefault();
             });
 
-            $('*[' + settings.jbKey + '-toggle][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"]').bind(settings.jqueryEvents[i], function() {
+            $('*[' + settings.jbKey + '-toggle][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"]').bind(settings.jqueryEvents[i], function(event) {
                 toggle($(this));
+                event.preventDefault();
             });
 
-            $('*[' + settings.jbKey + '-func][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"]:not([' + settings.jbKey + '-link]):not([' + settings.jbKey + '-form])').bind(settings.jqueryEvents[i], function() {
+            $('*[' + settings.jbKey + '-func][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"]:not([' + settings.jbKey + '-link]):not([' + settings.jbKey + '-form])').bind(settings.jqueryEvents[i], function(event) {
                 window[getVal($(this), 'func')]($(this));
+                event.preventDefault();
             });
         }
 
         /*
          * Form submit handler
          */
-        jQuery(document).on('click', '*[' + settings.jbKey + '-form]', function() {
+        jQuery(document).on('click', '*[' + settings.jbKey + '-form]', function(event) {
             formCall($(this));
+            event.preventDefault();
         });
 
 
