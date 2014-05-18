@@ -59,85 +59,91 @@
                 event.preventDefault();
             });
 
+            $('*[' + settings.jbKey + '-form][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"]').bind(settings.jqueryEvents[i], function(event) {
+                formCall($(this));
+                event.preventDefault();
+            });
+
             $('*[' + settings.jbKey + '-func][' + settings.jbKey + '-event="' + settings.jqueryEvents[i] + '"]:not([' + settings.jbKey + '-link]):not([' + settings.jbKey + '-form])').bind(settings.jqueryEvents[i], function(event) {
                 window[getVal($(this), 'func')]($(this));
                 event.preventDefault();
             });
+
         }
 
         /*
          * Form submit handler
          */
-        jQuery(document).on('click', '*[' + settings.jbKey + '-form]', function(event) {
+        jQuery(document).on('click', '*[' + settings.jbKey + '-form]:not([' + settings.jbKey + '-event])', function(event) {
             formCall($(this));
             event.preventDefault();
         });
 
 
         /*
-        * Prepare execute
-        */
+         * Prepare execute
+         */
         function prepareRequest(element, functionName) {
 
-          // check for data-func
-           if(getVal(element, 'func'))
-             window[getVal(element, 'func')](element);
+            // check for data-func
+            if(getVal(element, 'func'))
+                window[getVal(element, 'func')](element);
 
-           var accepted = true;
+            var accepted = true;
 
-           if (settings.executeBehavior === 'safe') {
-               if (currentRequest !== null) {
-                   if (settings.debug) console.log('-- Reject new request.');
-                   accepted = false;
-               }
-           }
+            if (settings.executeBehavior === 'safe') {
+                if (currentRequest !== null) {
+                    if (settings.debug) console.log('-- Reject new request.');
+                    accepted = false;
+                }
+            }
 
-           if (settings.executeBehavior === 'force') {
-               if (currentRequest !== null) {
-                   if (settings.debug) console.log('-- Abord current request and start new one.');
-                   currentRequest.abort();
-               }
-           }
+            if (settings.executeBehavior === 'force') {
+                if (currentRequest !== null) {
+                    if (settings.debug) console.log('-- Abord current request and start new one.');
+                    currentRequest.abort();
+                }
+            }
 
-           if (settings.executeBehavior === 'sync') {
-               if(currentRequest !== null) {
-                   if (settings.debug) console.log('-- Adding new request in queue : ' + element + '.');
-                   executePool.push({
-                       element: element,
-                       functionName: functionName
-                   });
-                   accepted = false;
-               }
-           }
+            if (settings.executeBehavior === 'sync') {
+                if(currentRequest !== null) {
+                    if (settings.debug) console.log('-- Adding new request in queue : ' + element + '.');
+                    executePool.push({
+                        element: element,
+                        functionName: functionName
+                    });
+                    accepted = false;
+                }
+            }
 
-           if (settings.executeBehavior === 'async') {
-               // nothing special to do.
-           }
+            if (settings.executeBehavior === 'async') {
+                // nothing special to do.
+            }
 
-           if(accepted === true)
-               if (settings.debug) console.log("<br/>");
+            if(accepted === true)
+                if (settings.debug) console.log("<br/>");
 
-           return accepted;
+            return accepted;
         }
 
         /**
-        * end request
-        */
+         * end request
+         */
         function endRequest() {
-           // leave the request alone
-           currentRequest = null;
+            // leave the request alone
+            currentRequest = null;
 
-           if(settings.executeBehavior === 'sync' && executePool.length > 0) {
-               // Remove previous element
-               executePool.shift();
-               // start next request if exists
-               if(executePool.length > 0) {
-                   if(executePool[0].functionName === 'call')
-                       call(executePool[0].element);
-                   else if(executePool[0].functionName === 'callForm')
-                       callForm(executePool[0].element);
-               }
-           }
+            if(settings.executeBehavior === 'sync' && executePool.length > 0) {
+                // Remove previous element
+                executePool.shift();
+                // start next request if exists
+                if(executePool.length > 0) {
+                    if(executePool[0].functionName === 'call')
+                        call(executePool[0].element);
+                    else if(executePool[0].functionName === 'callForm')
+                        callForm(executePool[0].element);
+                }
+            }
         }
 
         /*
@@ -155,103 +161,103 @@
         }
 
         /*
-        * Basic call behavior
-        */
+         * Basic call behavior
+         */
         function call(element) {
 
-           if (!prepareRequest(element, 'call'))
-               return;
+            if (!prepareRequest(element, 'call'))
+                return;
 
-           // Get link
-           var link = getVal(element, 'link');
-           // Get method
-           var method = (getVal(element, 'method')) ? getVal(element, 'method') : 'get';
-           // Get data format
-           var callbackFormat = (getVal(element, 'format')) ? getVal(element, 'format') : null;
-           if(callbackFormat === null)
-             callbackFormat = (settings.defaultCallbackFormat === 'html') ? null : settings.defaultCallbackFormat;
+            // Get link
+            var link = getVal(element, 'link');
+            // Get method
+            var method = (getVal(element, 'method')) ? getVal(element, 'method') : 'get';
+            // Get data format
+            var callbackFormat = (getVal(element, 'format')) ? getVal(element, 'format') : null;
+            if(callbackFormat === null)
+                callbackFormat = (settings.defaultCallbackFormat === 'html') ? null : settings.defaultCallbackFormat;
 
-           if (settings.debug) console.log('Call "' + link + '" with method "' + method + '" and callbackFormat: ' + callbackFormat + '.');
+            if (settings.debug) console.log('Call "' + link + '" with method "' + method + '" and callbackFormat: ' + callbackFormat + '.');
 
-           // call ajax
-           manageRequest($.ajax({
-               url: link,
-               type: method,
-               datatype: callbackFormat
-           }), element);
+            // call ajax
+            manageRequest($.ajax({
+                url: link,
+                type: method,
+                datatype: callbackFormat
+            }), element);
         }
 
         /*
-        * form call behavior
-        */
+         * form call behavior
+         */
         function formCall(element) {
 
-           if (!prepareRequest(element, 'formCall'))
-               return;
+            if (!prepareRequest(element, 'formCall'))
+                return;
 
-           // Get form
-           var form = (getVal(element, 'form').length > 0) ? element.parents('form') : $('form[name="' + getVal(element, 'form') + '"]');
-           // Get link
-           var link = (getVal(element, 'link')) ? getVal(element, 'link') : form.attr('action');
-           // Get method
-           var method = (getVal(element, 'method')) ? getVal(element, 'method') : form.attr('method');
-           // Get data format
-           var callbackFormat = (getVal(element, 'format')) ? getVal(element, 'format') : null;
-           if(callbackFormat === null)
-             callbackFormat = (settings.defaultCallbackFormat === 'html') ? null : settings.defaultCallbackFormat;
+            // Get form
+            var form = (getVal(element, 'form').length > 0) ? element.parents('form') : $('form[name="' + getVal(element, 'form') + '"]');
+            // Get link
+            var link = (getVal(element, 'link')) ? getVal(element, 'link') : form.attr('action');
+            // Get method
+            var method = (getVal(element, 'method')) ? getVal(element, 'method') : form.attr('method');
+            // Get data format
+            var callbackFormat = (getVal(element, 'format')) ? getVal(element, 'format') : null;
+            if(callbackFormat === null)
+                callbackFormat = (settings.defaultCallbackFormat === 'html') ? null : settings.defaultCallbackFormat;
 
-           // Prepare form values for request
-           var serializedData = form.serialize();
-           serializedData += "&" + form.attr('name');
+            // Prepare form values for request
+            var serializedData = form.serialize();
+            serializedData += "&" + form.attr('name');
 
-           // disable inputs
-           if(settings.disableFormInputs) {
-             var inputs = form.find("input, select, textarea");
-             inputs.attr('disabled', 'disabled');
-           }
+            // disable inputs
+            if(settings.disableFormInputs) {
+                var inputs = form.find("input, select, textarea");
+                inputs.attr('disabled', 'disabled');
+            }
 
-           if (settings.debug) console.log('Form call "' + link + '" with method "' + method + '", callbackFormat: ' + callbackFormat + ', parameter(s): ' + serializedData);
+            if (settings.debug) console.log('Form call "' + link + '" with method "' + method + '", callbackFormat: ' + callbackFormat + ', parameter(s): ' + serializedData);
 
-           // ajax request
-           manageRequest($.ajax({
-               url: link,
-               type: method,
-               datatype: callbackFormat,
-               data: serializedData
-           }), element);
+            // ajax request
+            manageRequest($.ajax({
+                url: link,
+                type: method,
+                datatype: callbackFormat,
+                data: serializedData
+            }), element);
         }
 
 
         /*
-        * Manage request result
-        */
+         * Manage request result
+         */
         function manageRequest(request, element) {
-           currentRequest = request;
+            currentRequest = request;
 
-           currentRequest.done(function(data, textStatus, jqXHR) {
-               doneRequest(element, data, textStatus, jqXHR);
-           });
+            currentRequest.done(function(data, textStatus, jqXHR) {
+                doneRequest(element, data, textStatus, jqXHR);
+            });
 
-           currentRequest.fail(function(jqXHR, textStatus, errorThrown) {
-               failedRequest(element, jqXHR, textStatus, errorThrown);
-           });
+            currentRequest.fail(function(jqXHR, textStatus, errorThrown) {
+                failedRequest(element, jqXHR, textStatus, errorThrown);
+            });
 
-           currentRequest.always(function() {
-               endRequest();
-               // disable inputs
-               if(settings.disableFormInputs) {
-                 var form = element.parents('form');
-                 if(form) {
-                   var inputs = form.find("input, select, textarea");
-                   inputs.removeAttr('disabled');
-                 }
-               }
-           });
+            currentRequest.always(function() {
+                endRequest();
+                // disable inputs
+                if(settings.disableFormInputs) {
+                    var form = element.parents('form');
+                    if(form) {
+                        var inputs = form.find("input, select, textarea");
+                        inputs.removeAttr('disabled');
+                    }
+                }
+            });
         }
 
         /*
-        * Call when a define ajax request is done
-        */
+         * Call when a define ajax request is done
+         */
         function doneRequest(element, data, textStatus, jqXHR) {
             if (settings.debug) console.log('[' + jqXHR.status + '] Request done.');
 
@@ -273,21 +279,21 @@
         }
 
         /*
-        * Call when a request have faile
-        */
+         * Call when a request have faile
+         */
         function failedRequest(element, jqXHR, textStatus, errorThrown) {
-           // Don't manage abort request
-           if(errorThrown === 'abort')
-               return;
+            // Don't manage abort request
+            if(errorThrown === 'abort')
+                return;
 
-           if (settings.debug) console.log('[' + jqXHR.status + '] Request error: ' + textStatus + ' - ' + errorThrown);
-           // Check for call back function
+            if (settings.debug) console.log('[' + jqXHR.status + '] Request error: ' + textStatus + ' - ' + errorThrown);
+            // Check for call back function
             var callback = getVal(element, 'callback');
-           if (callback) {
-               if (settings.debug) console.log('Callback custom function: "' + callback + '".');
-               var data = null;
-               window[callback](element, data, textStatus, jqXHR, errorThrown);
-           }
+            if (callback) {
+                if (settings.debug) console.log('Callback custom function: "' + callback + '".');
+                var data = null;
+                window[callback](element, data, textStatus, jqXHR, errorThrown);
+            }
         }
 
         function getVal(element, name) {
